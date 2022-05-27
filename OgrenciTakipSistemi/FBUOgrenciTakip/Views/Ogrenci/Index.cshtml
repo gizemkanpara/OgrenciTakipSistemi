@@ -1,0 +1,225 @@
+﻿@model DataAccessLayer.Entities.OgrenciListDto
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+<h2>dıratin:@ViewData["duration"] </h2>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<div class="row">
+    <form asp-action="Index">
+        <div class="col-md-2">
+            Ad:<input type="text" id="aranacak" name="aranacak" />
+        </div>
+        <div class="col-md-2">
+            Soyad:<input type="text" id="aranacakSoyad" name="aranacakSoyad" />
+        </div>
+        <div class="col-md-1">
+            <input type="submit" value="Ara" class="btn btn-primary" />
+
+        </div>
+    </form>
+</div>
+<input type="button" class="btn btn-danger searchOgr" value="SearchByAjax" />
+<div id="ogrList" name="ogrList">
+    @Html.Partial("OgrListPartial", Model)
+</div>
+
+
+
+<div>
+    <input type="button" onclick="getOgrFromApi()" value="get ogr List" />
+    <input type="button" onclick="getOgrFromApiOne()" value="get ogr one" />
+
+
+    <div>
+        <div>userNAme: <input type="text" id="userName" /></div>
+        <div>PAssword: <input type="text" id="password" /></div>
+        <input type="button" onclick="getToken()" value="get token" />
+    </div>
+    @* <input type="button" onclick="get()" value="get ogr List" />*@
+    @*<input id="btn_auth" type="button" value="authenticate" />
+        <input id="btn_get" type="button" value="getSth" />*@
+</div>
+
+@section Scripts{
+    <script>
+        var authToken = '';
+        $(document).ready(function () {
+
+            $('.searchOgr').click(function () {
+                let araAd = $('#aranacak').val();
+                let araSoyad = $('#aranacakSoyad').val();
+                let url = "/Ogrenci/OgrListPartial?aranacak=" + araAd + "&aranacakSoyad=" + araSoyad;
+                console.log(url);
+                $('#ogrList').load(url);
+            });
+
+            $("#btn_auth").click(function () {
+                console.log("clicked");
+
+                var autData = {
+                    userName: 'yzcibrahim',
+                    password: 'yzcyzc'
+                };
+
+                $.ajax({
+                    url: 'http://localhost:40040/WeatherForecast/authentication',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: JSON.stringify(autData),
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Accept': 'application/json',
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept"
+                    },
+                    success: function (result) {
+                        console.log(result);
+                        authToken = result;
+                        // getNotesByOgr(ogrId);
+                    },
+                    error: function (e, t) {
+                        alert("E");
+                    }
+                });
+
+
+
+            });
+
+            $("#btn_get").click(function () {
+                //var url = "http://localhost:40040/WeatherForecast";
+                //$.get(url, function (data, status) {
+                //    console.log(data);
+                //});
+                $.ajax({
+                    url: 'http://localhost:40040/WeatherForecast',
+                    type: 'GET',
+                    dataType: 'json',
+                    headers: {
+                        'Accept': 'application/json',
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+                        'Access-Control-Allow-Methods': 'GET',
+                        'Access-Control-Allow-Credentials': 'true',
+                        "Authorization": "Bearer " + authToken
+
+                    },
+                    success: function (result, e, t) {
+                        console.log(result);
+
+                        // getNotesByOgr(ogrId);
+                    },
+                    error: function (e, t, x) {
+                        alert("E");
+                        console.log(e);
+                        console.log(t);
+                    }
+                });
+            });
+
+        });
+
+        function getOgrFromApi() {
+            console.log("getOgrFromApi called ");
+            $.ajax({
+                url: 'http://localhost:10428/api/Ogr',
+                type: 'GET',
+                dataType: 'json',
+                headers: {
+                    'Accept': 'application/json',
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+                    'Access-Control-Allow-Methods': 'GET',
+                    'Access-Control-Allow-Credentials': 'true',
+                    "Authorization": "Bearer " + authToken
+
+                },
+                success: function (result, e, t) {
+                    console.log(result);
+
+                    // getNotesByOgr(ogrId);
+                },
+                error: function (e, t, x) {
+                    alert("E");
+                    console.log(e);
+                    console.log(t);
+                }
+            })
+
+        }
+
+        function getOgrFromApiOne() {
+            console.log("getOgrFromApi called ");
+            $.ajax({
+                url: 'http://localhost:10428/api/Ogr/1',
+                type: 'GET',
+                dataType: 'json',
+                headers: {
+                    'Accept': 'application/json',
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+                    'Access-Control-Allow-Methods': 'GET',
+                    'Access-Control-Allow-Credentials': 'true',
+                    "Authorization": "Bearer " + authToken
+
+                },
+                success: function (result, e, t) {
+                    console.log(result);
+
+                    // getNotesByOgr(ogrId);
+                },
+                error: function (e, t, x) {
+                    alert("E");
+                    console.log(e);
+                    console.log(t);
+                }
+            })
+
+        }
+
+        function getToken() {
+            var autData = {
+                userName: $("#userName").val(),
+                password: $("#password").val()
+            };
+
+            $.ajax({
+                url: 'http://localhost:10428/api/Auth/authentication',
+                type: 'POST',
+                dataType: 'json',
+                data: JSON.stringify(autData),
+                headers: {
+                    "Content-Type": "application/json",
+                    'Accept': 'application/json',
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept"
+                },
+                success: function (result) {
+                    console.log(result);
+                    authToken = result;
+                    // getNotesByOgr(ogrId);
+                },
+                error: function (e, t) {
+                    alert("E");
+                }
+            });
+
+
+
+        }
+
+        function loadDiv(pageNum) {
+            let araAd = $('#aranacak').val();
+            let araSoyad = $('#aranacakSoyad').val();
+            let url = "/Ogrenci/OgrListPartial?aranacak=" + araAd + "&aranacakSoyad=" + araSoyad + "&pageNum=" + pageNum;
+            console.log(url);
+            $('#ogrList').load(url);
+        }
+
+    </script>
+}

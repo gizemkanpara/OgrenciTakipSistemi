@@ -1,0 +1,63 @@
+﻿@model DataAccessLayer.Entities.OgrenciListDto  
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayName("Id")
+            </th>
+            <th>
+                @Html.DisplayName("Ad")
+            </th>
+            <th>
+                @Html.DisplayName("Soyad")
+            </th>
+            <th>
+                @Html.DisplayName("Tel")
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OgrList)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Ad)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Soyad)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tel)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div>
+    @{ 
+        int artikSayfa = 0;
+        int oran = Model.TotalCount / 5;
+        if (oran*5 < Model.TotalCount)
+        {
+            artikSayfa = 1;
+        }
+    }
+   
+    @for (int i = 1; i <= Model.TotalCount / 5+ artikSayfa; i++)
+    {
+        <input type="button" value="@i" onclick="loadDiv(@i)" />
+    }
+</div>
